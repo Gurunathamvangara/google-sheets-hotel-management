@@ -34,9 +34,6 @@ const CONFIG = {
 // 1. INITIALIZATION & SETUP
 // ============================================
 
-/**
- * Initialize PMS System - RUN THIS FIRST
- */
 function initializePMS() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -59,9 +56,6 @@ function initializePMS() {
   }
 }
 
-/**
- * Create Custom Menu
- */
 function createCustomMenu() {
   const ui = SpreadsheetApp.getUi();
   ui.createMenu("🏨 PMS")
@@ -81,9 +75,6 @@ function createCustomMenu() {
     .addToUi();
 }
 
-/**
- * Setup Triggers for Automation
- */
 function setupTriggers() {
   const triggers = ScriptApp.getProjectTriggers();
   triggers.forEach(trigger => ScriptApp.deleteTrigger(trigger));
@@ -106,9 +97,6 @@ function setupTriggers() {
 // 2. DASHBOARD FUNCTIONS
 // ============================================
 
-/**
- * Update Dashboard with real-time data
- */
 function updateDashboard() {
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -825,238 +813,38 @@ function getGuestStatistics() {
 // ============================================
 
 function openCheckInDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-    </style>
-    <h2>✓ Check-in Guest</h2>
-    <p>Enter Reservation ID to check in:</p>
-    <input type="text" id="reservationId" placeholder="e.g., RES123456" />
-    <button onclick="checkIn()">✓ Check-in</button>
-    <script>
-      function checkIn() {
-        const resId = document.getElementById('reservationId').value;
-        if (!resId) {
-          alert('Please enter Reservation ID');
-          return;
-        }
-        google.script.run.processCheckIn(resId);
-        google.script.host.close();
-      }
-    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; }</style><h2>Check-in Guest</h2><p>Enter Reservation ID to check in:</p><input type="text" id="reservationId" placeholder="e.g., RES123456" /><button onclick="checkIn()">Check-in</button><script>function checkIn() { const resId = document.getElementById("reservationId").value; if (!resId) { alert("Please enter Reservation ID"); return; } google.script.run.processCheckIn(resId); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Check-in Guest");
 }
 
 function openCheckOutDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-    </style>
-    <h2>✗ Check-out Guest</h2>
-    <p>Enter Room Number to check out:</p>
-    <input type="text" id="roomNumber" placeholder="e.g., 101" />
-    <button onclick="checkOut()">✗ Check-out</button>
-    <script>
-      function checkOut() {
-        const room = document.getElementById('roomNumber').value;
-        if (!room) {
-          alert('Please enter Room Number');
-          return;
-        }
-        google.script.run.processCheckOut(room);
-        google.script.host.close();
-      }
-    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; }</style><h2>Check-out Guest</h2><p>Enter Room Number to check out:</p><input type="text" id="roomNumber" placeholder="e.g., 101" /><button onclick="checkOut()">Check-out</button><script>function checkOut() { const room = document.getElementById("roomNumber").value; if (!room) { alert("Please enter Room Number"); return; } google.script.run.processCheckOut(room); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Check-out Guest");
 }
 
 function openNewReservationDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-      label { font-weight: bold; display: block; margin-top: 10px; }
-    </style>
-    <h2>➕ New Reservation</h2>
-    <label>Guest Name:</label>
-    <input type="text" id="guestName" placeholder="Full Name" />
-    
-    <label>Check-in Date:</label>
-    <input type="date" id="checkInDate" />
-    
-    <label>Check-out Date:</label>
-    <input type="date" id="checkOutDate" />
-    
-    <label>Room Number:</label>
-    <input type="text" id="roomNumber" placeholder="e.g., 101" />
-    
-    <label>Room Type:</label>
-    <select id="roomType">
-      <option value="">Select Room Type</option>
-      <option value="Standard">Standard</option>
-      <option value="Deluxe">Deluxe</option>
-      <option value="Suite">Suite</option>
-    </select>
-    
-    <label>Rate per Night (₹):</label>
-    <input type="number" id="rate" placeholder="2500" />
-    
-    <button onclick="createRes()">➕ Create Reservation</button>
-    <script>\n      function createRes() {
-        const gName = document.getElementById('guestName').value;
-        const cIn = document.getElementById('checkInDate').value;
-        const cOut = document.getElementById('checkOutDate').value;
-        const room = document.getElementById('roomNumber').value;
-        const rType = document.getElementById('roomType').value;
-        const rate = document.getElementById('rate').value;
-        
-        if (!gName || !cIn || !cOut || !room || !rType || !rate) {
-          alert('Please fill all fields');
-          return;
-        }
-        
-        google.script.run.addReservation(gName, cIn, cOut, room, rType, parseFloat(rate));
-        alert('Reservation created successfully!');
-        google.script.host.close();
-      }\n    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input, select { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; } label { font-weight: bold; display: block; margin-top: 10px; }</style><h2>New Reservation</h2><label>Guest Name:</label><input type="text" id="guestName" placeholder="Full Name" /><label>Check-in Date:</label><input type="date" id="checkInDate" /><label>Check-out Date:</label><input type="date" id="checkOutDate" /><label>Room Number:</label><input type="text" id="roomNumber" placeholder="e.g., 101" /><label>Room Type:</label><select id="roomType"><option value="">Select Room Type</option><option value="Standard">Standard</option><option value="Deluxe">Deluxe</option><option value="Suite">Suite</option></select><label>Rate per Night:</label><input type="number" id="rate" placeholder="2500" /><button onclick="createRes()">Create Reservation</button><script>function createRes() { const gName = document.getElementById("guestName").value; const cIn = document.getElementById("checkInDate").value; const cOut = document.getElementById("checkOutDate").value; const room = document.getElementById("roomNumber").value; const rType = document.getElementById("roomType").value; const rate = document.getElementById("rate").value; if (!gName || !cIn || !cOut || !room || !rType || !rate) { alert("Please fill all fields"); return; } google.script.run.addReservation(gName, cIn, cOut, room, rType, parseFloat(rate)); alert("Reservation created successfully!"); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "New Reservation");
 }
 
 function openNewGuestDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-      label { font-weight: bold; display: block; margin-top: 10px; }
-    </style>
-    <h2>🧑 New Guest</h2>
-    <label>Full Name:</label>
-    <input type="text" id="fullName" placeholder="Full Name" />
-    
-    <label>Email:</label>
-    <input type="email" id="email" placeholder="email@example.com" />
-    
-    <label>Phone:</label>
-    <input type="tel" id="phone" placeholder="9876543210" />
-    
-    <label>City:</label>
-    <input type="text" id="city" placeholder="City" />
-    
-    <label>Country:</label>
-    <input type="text" id="country" placeholder="Country" />
-    
-    <button onclick="createGuest()">🧑 Add Guest</button>
-    <script>
-      function createGuest() {
-        const name = document.getElementById('fullName').value;
-        const email = document.getElementById('email').value;
-        const phone = document.getElementById('phone').value;
-        const city = document.getElementById('city').value;
-        const country = document.getElementById('country').value;
-        
-        if (!name || !email || !phone) {
-          alert('Please fill required fields');
-          return;
-        }
-        
-        google.script.run.addGuest(name, email, phone, '', city, country);
-        alert('Guest added successfully!');
-        google.script.host.close();
-      }
-    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; } label { font-weight: bold; display: block; margin-top: 10px; }</style><h2>New Guest</h2><label>Full Name:</label><input type="text" id="fullName" placeholder="Full Name" /><label>Email:</label><input type="email" id="email" placeholder="email@example.com" /><label>Phone:</label><input type="tel" id="phone" placeholder="9876543210" /><label>City:</label><input type="text" id="city" placeholder="City" /><label>Country:</label><input type="text" id="country" placeholder="Country" /><button onclick="createGuest()">Add Guest</button><script>function createGuest() { const name = document.getElementById("fullName").value; const email = document.getElementById("email").value; const phone = document.getElementById("phone").value; const city = document.getElementById("city").value; const country = document.getElementById("country").value; if (!name || !email || !phone) { alert("Please fill required fields"); return; } google.script.run.addGuest(name, email, phone, "", city, country); alert("Guest added successfully!"); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "New Guest");
 }
 
 function openPaymentDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-      label { font-weight: bold; display: block; margin-top: 10px; }
-    </style>
-    <h2>💳 Add Payment</h2>
-    <label>Invoice ID:</label>
-    <input type="text" id="invoiceId" placeholder="e.g., INV123456" />
-    
-    <label>Amount (₹):</label>
-    <input type="number" id="amount" placeholder="0.00" />
-    
-    <button onclick=\"addPayment()\">💳 Add Payment</button>\n    <script>
-      function addPayment() {
-        const invId = document.getElementById('invoiceId').value;
-        const amount = document.getElementById('amount').value;
-        
-        if (!invId || !amount) {
-          alert('Please fill all fields');
-          return;
-        }
-        
-        google.script.run.updatePaymentStatus(invId, 'Paid', new Date());
-        alert('Payment recorded successfully!');
-        google.script.host.close();
-      }
-    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; } label { font-weight: bold; display: block; margin-top: 10px; }</style><h2>Add Payment</h2><label>Invoice ID:</label><input type="text" id="invoiceId" placeholder="e.g., INV123456" /><label>Amount:</label><input type="number" id="amount" placeholder="0.00" /><button onclick="addPayment()">Add Payment</button><script>function addPayment() { const invId = document.getElementById("invoiceId").value; const amount = document.getElementById("amount").value; if (!invId || !amount) { alert("Please fill all fields"); return; } google.script.run.updatePaymentStatus(invId, "Paid", new Date()); alert("Payment recorded successfully!"); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Add Payment");
 }
 
 function openMaintenanceDialog() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: Arial; }
-      button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-      button:hover { background: #1a73e8; }
-      label { font-weight: bold; display: block; margin-top: 10px; }
-    </style>
-    <h2>🔧 Report Maintenance</h2>
-    <label>Room Number:</label>
-    <input type="text" id="roomNumber" placeholder="e.g., 101" />
-    
-    <label>Issue Description:</label>
-    <textarea id="issue\" placeholder="Describe the maintenance issue\" rows=\"4\"></textarea>
-    
-    <label>Priority:</label>
-    <select id=\"priority\">
-      <option value=\"Normal\">Normal</option>
-      <option value=\"High\">High</option>
-      <option value=\"Urgent\">Urgent</option>
-    </select>
-    
-    <button onclick=\"reportMaintenance()\">🔧 Report Maintenance</button>
-    <script>
-      function reportMaintenance() {
-        const room = document.getElementById('roomNumber').value;
-        const issue = document.getElementById('issue').value;
-        const priority = document.getElementById('priority').value;
-        
-        if (!room || !issue) {
-          alert('Please fill all fields');
-          return;
-        }
-        
-        google.script.run.reportMaintenanceIssue(room, issue, priority);
-        alert('Maintenance issue reported successfully!');
-        google.script.host.close();
-      }
-    </script>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } input, select, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: Arial; } button { width: 100%; padding: 12px; background: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; } button:hover { background: #1a73e8; } label { font-weight: bold; display: block; margin-top: 10px; }</style><h2>Report Maintenance</h2><label>Room Number:</label><input type="text" id="roomNumber" placeholder="e.g., 101" /><label>Issue Description:</label><textarea id="issue" placeholder="Describe the maintenance issue" rows="4"></textarea><label>Priority:</label><select id="priority"><option value="Normal">Normal</option><option value="High">High</option><option value="Urgent">Urgent</option></select><button onclick="reportMaintenance()">Report Maintenance</button><script>function reportMaintenance() { const room = document.getElementById("roomNumber").value; const issue = document.getElementById("issue").value; const priority = document.getElementById("priority").value; if (!room || !issue) { alert("Please fill all fields"); return; } google.script.run.reportMaintenanceIssue(room, issue, priority); alert("Maintenance issue reported successfully!"); google.script.host.close(); }</script>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Report Maintenance");
 }
 
@@ -1065,14 +853,13 @@ function openMaintenanceDialog() {
 // ============================================
 
 function generateReports() {
-  try {\n    const ss = SpreadsheetApp.getActiveSpreadsheet();
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
     const reportsSheet = ss.getSheetByName(CONFIG.SHEETS.REPORTS);
     const roomsSheet = ss.getSheetByName(CONFIG.SHEETS.ROOMS);
-    const reservationSheet = ss.getSheetByName(CONFIG.SHEETS.RESERVATIONS);
     const billingSheet = ss.getSheetByName(CONFIG.SHEETS.BILLING);
     
     const roomsData = roomsSheet.getDataRange().getValues();
-    const reservationData = reservationSheet.getDataRange().getValues();
     const billingData = billingSheet.getDataRange().getValues();
     
     const occupiedRooms = countOccupiedRooms(roomsData);
@@ -1083,37 +870,37 @@ function generateReports() {
     const report = [
       ["Report Type", "Daily Report"],
       ["Date", new Date().toDateString()],
-      ["Occupancy Rate", occupancyRate + \"%\"],
-      ["Today's Revenue", \"₹\" + todayRevenue.toFixed(2)],
-      [\"Total Rooms\", totalRooms],
-      [\"Occupied\", occupiedRooms],
-      [\"Vacant\", totalRooms - occupiedRooms],
+      ["Occupancy Rate", occupancyRate + "%"],
+      ["Today Revenue", "₹" + todayRevenue.toFixed(2)],
+      ["Total Rooms", totalRooms],
+      ["Occupied", occupiedRooms],
+      ["Vacant", totalRooms - occupiedRooms],
     ];
     
     reportsSheet.clearContents();
     reportsSheet.getRange(1, 1, report.length, 2).setValues(report);
     
-    SpreadsheetApp.getUi().alert(\"✅ Report generated successfully!\");
-    Logger.log(\"✅ Report generated\");
+    SpreadsheetApp.getUi().alert("✅ Report generated successfully!");
+    Logger.log("✅ Report generated");
   } catch (error) {
-    Logger.log(\"❌ Error generating reports: \" + error);
+    Logger.log("❌ Error generating reports: " + error);
   }
 }
 
 function nightAudit() {
-  Logger.log(\"🌙 Running Night Audit...\");
+  Logger.log("🌙 Running Night Audit...");
   
   try {
     updateDashboard();
     sendDailyReport();
-    Logger.log(\"✅ Night Audit Complete\");
+    Logger.log("✅ Night Audit Complete");
   } catch (error) {
-    Logger.log(\"❌ Error during night audit: \" + error);
+    Logger.log("❌ Error during night audit: " + error);
   }
 }
 
 function sendDailyReport() {
-  Logger.log(\"📧 Sending Daily Report...\");
+  Logger.log("📧 Sending Daily Report...");
   
   try {
     const ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -1128,13 +915,9 @@ function sendDailyReport() {
     const occupancyRate = ((occupiedRooms / totalRooms) * 100).toFixed(1);
     const todayRevenue = calculateTodayRevenue(billingData);
     
-    const emailBody = `\n      Daily Report - ${new Date().toDateString()}\n      \n      Property: ${CONFIG.PROPERTY_NAME}\n      \n      OCCUPANCY:\n      - Total Rooms: ${totalRooms}\n      - Occupied: ${occupiedRooms}\n      - Vacant: ${totalRooms - occupiedRooms}\n      - Occupancy Rate: ${occupancyRate}%\n      \n      REVENUE:\n      - Today's Revenue: ₹${todayRevenue.toFixed(2)}\n      \n      Generated: ${new Date()}\n    `;
-    
-    // Uncomment to enable email sending\n    // GmailApp.sendEmail(CONFIG.ADMIN_EMAIL, \"Daily PMS Report\", emailBody);
-    
-    Logger.log(\"✅ Daily Report Email Ready (uncomment GmailApp line to enable)\");
+    Logger.log("✅ Daily Report Generated - Occupancy: " + occupancyRate + "%, Revenue: " + todayRevenue);
   } catch (error) {
-    Logger.log(\"❌ Error sending daily report: \" + error);
+    Logger.log("❌ Error sending daily report: " + error);
   }
 }
 
@@ -1143,69 +926,14 @@ function sendDailyReport() {
 // ============================================
 
 function openSettings() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      .setting { margin: 15px 0; }
-      strong { display: block; margin-bottom: 5px; }
-    </style>
-    <h2>⚙️ Settings</h2>
-    <div class=\"setting\">
-      <strong>Property Name:</strong>
-      ${CONFIG.PROPERTY_NAME}
-    </div>
-    <div class=\"setting\">
-      <strong>Total Rooms:</strong>
-      ${CONFIG.TOTAL_ROOMS}
-    </div>
-    <div class=\"setting\">
-      <strong>Timezone:</strong>
-      ${CONFIG.TIMEZONE}
-    </div>
-    <div class=\"setting\">
-      <strong>Admin Email:</strong>
-      ${CONFIG.ADMIN_EMAIL}
-    </div>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } .setting { margin: 15px 0; } strong { display: block; margin-bottom: 5px; }</style><h2>Settings</h2><div class="setting"><strong>Property Name:</strong>' + CONFIG.PROPERTY_NAME + '</div><div class="setting"><strong>Total Rooms:</strong>' + CONFIG.TOTAL_ROOMS + '</div><div class="setting"><strong>Timezone:</strong>' + CONFIG.TIMEZONE + '</div><div class="setting"><strong>Admin Email:</strong>' + CONFIG.ADMIN_EMAIL + '</div>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Settings");
 }
 
 function showHelp() {
-  const html = HtmlService.createHtmlOutput(`
-    <style>
-      body { font-family: Arial; padding: 20px; }
-      h3 { color: #4285F4; margin-top: 15px; }
-      p { line-height: 1.6; }
-    </style>
-    <h2>ℹ️ PMS System Help</h2>
-    
-    <h3>📊 Dashboard</h3>
-    <p>Real-time overview of your property with key metrics.</p>
-    
-    <h3>📋 Reservations</h3>
-    <p>Manage guest bookings, check-in dates, and room assignments.</p>
-    
-    <h3>👥 Guests</h3>
-    <p>Guest profiles, contact details, and stay history.</p>
-    
-    <h3>🏠 Rooms</h3>
-    <p>Room inventory, types, rates, and current status.</p>
-    
-    <h3>🧹 Housekeeping</h3>
-    <p>Room cleaning schedules and staff assignments.</p>
-    
-    <h3>💳 Billing</h3>
-    <p>Invoices, payments, and guest billing information.</p>
-    
-    <h3>📈 Reports</h3>
-    <p>Analytics, occupancy rates, and revenue reports.</p>
-    
-    <h3>❓ Getting Started</h3>
-    <p>1. Click on 🏨 PMS menu<br/>
-       2. Select your desired function<br/>
-       3. Fill in the required information<br/>
-       4. Submit and the system will update automatically</p>
-  `);
+  const htmlContent = '<style>body { font-family: Arial; padding: 20px; } h3 { color: #4285F4; margin-top: 15px; } p { line-height: 1.6; }</style><h2>PMS System Help</h2><h3>Dashboard</h3><p>Real-time overview of your property with key metrics.</p><h3>Reservations</h3><p>Manage guest bookings, check-in dates, and room assignments.</p><h3>Guests</h3><p>Guest profiles, contact details, and stay history.</p><h3>Rooms</h3><p>Room inventory, types, rates, and current status.</p><h3>Housekeeping</h3><p>Room cleaning schedules and staff assignments.</p><h3>Billing</h3><p>Invoices, payments, and guest billing information.</p><h3>Reports</h3><p>Analytics, occupancy rates, and revenue reports.</p><h3>Getting Started</h3><p>1. Click on PMS menu<br/>2. Select your desired function<br/>3. Fill in the required information<br/>4. Submit and the system will update automatically</p>';
+  const html = HtmlService.createHtmlOutput(htmlContent);
   SpreadsheetApp.getUi().showModalDialog(html, "Help");
 }
 
