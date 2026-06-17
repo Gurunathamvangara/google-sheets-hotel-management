@@ -1,0 +1,23 @@
+```markdown
+# Dashboard Sample Sheet (CSV Export)
+
+"Metric","Value","Target","% Achieved","Trend"
+"Total Rooms","50","-","-","Up"
+"Occupied","35","-","70%","Up"
+"Vacant","12","-","24%","Down"
+"Maintenance","3","-","6%","-"
+"Today's Revenue","2450","-","-","Up"
+"This Month Revenue","45320","-","-","Up"
+
+
+# Today's Schedule
+"Room","Guest Name","Type","Time","Status"
+"101","John Smith","Deluxe","15:00","CHECK-IN"
+"102","Sarah Johnson","Standard","11:00","CHECK-OUT"
+"205","Mike Davis","Suite","14:30","CHECK-IN"
+"301","Emma Wilson","Deluxe","10:30","CHECK-OUT"
+"305","Robert Brown","Standard","16:00","CHECK-IN"
+"401","Lisa Anderson","Suite","11:15","CHECK-OUT"
+"403","David Martinez","Standard","15:30","CHECK-IN"
+"405","Jennifer Taylor","Deluxe","10:45","CHECK-OUT"
+```
